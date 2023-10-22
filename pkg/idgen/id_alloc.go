@@ -88,9 +88,18 @@ func (this *idAllocator) NextId(f preloadFunc) (int64, error) {
 	this.Waiting = append(this.Waiting, waitChan)
 	this.Unlock() // Other requests enter a timed wait
 
+	// Attention：
+	// When the step configuration is inappropriate (for example, if the step
+	// configuration is too small, the 'seg' is frequently pulled), there may be
+	// a large number of requests waiting for the next 'seg'.
+	// At this point, if the concurrency is high or the pull seg operation is slow,
+	// there may be a large number of requests waiting.
+	// Some requests may not get an id because the next seq has not been obtained
+	// after waiting for a timeout
+
 	// Wait up to 500ms
 	// The failure is returned promptly and the caller tries again.
-	timer := time.NewTimer(2000 * time.Millisecond)
+	timer := time.NewTimer(500 * time.Millisecond)
 	select {
 	case <-waitChan:
 	case <-timer.C:
