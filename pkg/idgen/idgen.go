@@ -139,6 +139,7 @@ func (this *IdGenerator) AddBizTag(ctx context.Context, bizTag string) (*idAlloc
 	idAlloc := NewidAllocator(bizTag)
 	idAlloc.Init(seg)
 	this.cache.add(idAlloc)
+	idAlloc.update()
 
 	return idAlloc, nil
 }

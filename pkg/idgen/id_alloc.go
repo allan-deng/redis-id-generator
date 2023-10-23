@@ -97,9 +97,9 @@ func (this *idAllocator) NextId(f preloadFunc) (int64, error) {
 	// Some requests may not get an id because the next seq has not been obtained
 	// after waiting for a timeout
 
-	// Wait up to 500ms
+	// Wait up to 1000ms
 	// The failure is returned promptly and the caller tries again.
-	timer := time.NewTimer(500 * time.Millisecond)
+	timer := time.NewTimer(1000 * time.Millisecond)
 	select {
 	case <-waitChan:
 	case <-timer.C:

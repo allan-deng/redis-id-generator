@@ -6,12 +6,20 @@ import (
 	"redis-id-generator/pkg/idgen"
 	"sync"
 	"time"
+
+	"github.com/go-redis/redis/v8"
 )
 
 var wg sync.WaitGroup
 
 func main() {
-	store := idgen.NewRedisIdStore()
+	client := redis.NewClient(&redis.Options{
+		Addr:     "localhost:6379", 
+		Password: "",              
+		DB:       0,              
+	})
+
+	store := idgen.NewRedisIdStore(client)
 	// step > qpm
 	idgen := idgen.NewIdGenrator(store, idgen.With2BytesRandomFilter())
 	now := time.Now()
@@ -30,6 +38,5 @@ func main() {
 		}()
 	}
 	wg.Wait()
-
 	fmt.Printf("%s\n", time.Since(now))
 }
