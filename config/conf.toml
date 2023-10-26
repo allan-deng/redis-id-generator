@@ -1,0 +1,21 @@
+[app]
+ip = "0.0.0.0"
+port = 8080
+
+[redis]
+addr = "localhost:6379"
+password = ""
+
+[log]
+level = "debug" # defalut: info. trace,debug,info,warn,error,fatal
+output = "console" # file/console
+filename = "log/idgen.log"
+max_age = 7        # unit:day
+rotation_time = 24 # uint: hour
+
+[idgen]
+#TODO
+default_step = 10000
+preload_retry_times = 3
+preload_timeout = 3000
+biztag_expire_time = 0
