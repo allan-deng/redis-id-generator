@@ -3,10 +3,10 @@ module github.com/allan-deng/redis-id-generator
 go 1.21.2
 
 require (
+	github.com/allan-deng/redis-id-generator/pkg/idgen v0.0.0-20231026144029-9609b2826089
 	github.com/buaazp/fasthttprouter v0.1.1
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/lestrrat/go-file-rotatelogs v0.0.0-20180223000712-d3151e2a480f
-	github.com/rifflock/lfshook v0.0.0-20180920164130-b9218ef580f5
 	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/viper v1.17.0
 	github.com/valyala/fasthttp v1.50.0
