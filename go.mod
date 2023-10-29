@@ -2,6 +2,8 @@ module github.com/allan-deng/redis-id-generator
 
 go 1.21.2
 
+replace github.com/allan-deng/redis-id-generator/pkg/idgen => ./pkg/idgen
+
 require (
 	github.com/allan-deng/redis-id-generator/pkg/idgen v0.0.0-20231026144029-9609b2826089
 	github.com/buaazp/fasthttprouter v0.1.1
