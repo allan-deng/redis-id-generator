@@ -52,22 +52,3 @@ jobs:
                 asset_path: ${{ env.ARCHIVE_NAME }}
                 asset_name: ${{ env.ARCHIVE_NAME }}
                 asset_content_type: application/zip
-                
-            - name: Create Tag
-              env:
-                TAG: ${{ github.event.inputs.tag }}
-              run: |
-                git config --local user.email "action@github.com"
-                git config --local user.name "GitHub Action"
-                git tag -a pkg/idgen/$TAG -m "Release pkg/idgen/$TAG"
-                git push --tags
-         
-            - name: Create LIb Release
-              uses: actions/create-release@v1
-              env:
-                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              with:
-                tag_name: pkg/idgen/${{ github.event.inputs.tag }}
-                release_name: Release pkg/idgen/${{ github.event.inputs.tag }}   
-                draft: false
-                prerelease: false 
