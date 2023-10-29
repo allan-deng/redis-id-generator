@@ -24,5 +24,5 @@ jobs:
     - name: Test
       env:
         GO_TEST_RES_PATH: test_ret_${{ github.ref_name }}
-      run: file=$(GO_TEST_RES_PATH)'_'$(date +%Y%m%d-%H%M%S)'.log' make test > $file
+      run: file=$GO_TEST_RES_PATH'_'$(date +%Y%m%d-%H%M%S)'.log' make test > $file
 
