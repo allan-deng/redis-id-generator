@@ -20,6 +20,9 @@ idgensvr
 
 # Go workspace file
 go.work
+go.work.sum
 
 # Other
 .VSCodeCounter
+log
+todo.md

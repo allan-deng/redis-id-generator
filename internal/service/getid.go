@@ -15,7 +15,6 @@ type Response struct {
 	Body       interface{}
 }
 
-// 需要使用 jsom mashal 的字段必须是 可导出的。否则将不会处理
 type IdRsp struct {
 	Ret    int    `json:"ret"`
 	Msg    string `json:"msg"`

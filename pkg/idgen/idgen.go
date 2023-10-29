@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	MaxStep               = 10e6
+	MaxStep               = 10e7
 	DefaultStep           = 2000            // default step
 	DefaultRetry          = 3               // default retry times when id allocator preload next segment
 	DefaultPreloadTimeout = 3 * time.Second // default timeout  when id allocator preload next segment
@@ -55,6 +55,9 @@ func WithPreloadRetryTimes(times int) Option {
 func WithStep(step int64) Option {
 	if step > MaxStep {
 		step = MaxStep
+	}
+	if step <= 0 {
+		step = DefaultStep
 	}
 	return func(idgen *IdGenerator) {
 		idgen.step = step

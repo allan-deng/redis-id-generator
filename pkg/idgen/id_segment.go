@@ -22,7 +22,7 @@ func (this *idSegment) init(conf *Seg) {
 	this.isInit = true
 }
 
-func (this *idSegment) GetNext() int64 {
+func (this *idSegment) getNext() int64 {
 	id := atomic.AddInt64(&this.Cur, 1)
 	if id >= this.Max {
 		return 0

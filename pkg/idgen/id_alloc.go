@@ -9,16 +9,16 @@ import (
 type preloadFunc func(bizTag string) (*Seg, error)
 
 type idAllocator struct {
-	Key          string       // 也就是`biz_tag`用来区分业务
-	Step         int64        // 记录步长
-	currentPos   int64        // 当前使用的 segment buffer光标; 总共两个buffer缓存区，循环使用
-	Buffer       []*idSegment // 双buffer 一个作为预缓存作用
-	UpdateTime   time.Time    // 记录更新时间 方便长时间不用进行清理，防止占用内存
-	mutex        sync.Mutex   // 互斥锁
-	IsPreload    bool         // 是否正在预加载
+	Key          string       // 'bizTag' is used to distinguish businesses
+	Step         int64        // step
+	currentPos   int64        // The segment buffer index currently in use; There are two buffer buffers in total, which are recycled
+	Buffer       []*idSegment // Two buffers ,One serves as a precache
+	UpdateTime   time.Time    // Record the update time to clear the memory when it has not been used for a long time
+	mutex        sync.Mutex
+	IsPreload    bool // it is being preloaded
 	preloadMutex sync.Mutex
 	IsInit       bool
-	Waiting      []chan byte // 挂起等待
+	Waiting      []chan byte
 }
 
 func NewidAllocator(bizTag string) *idAllocator {
@@ -56,17 +56,16 @@ func (this *idAllocator) NextId(f preloadFunc) (int64, error) {
 	this.Lock()
 	defer this.Unlock()
 
-	// 判断当前的buf 是否可用
 	seg := this.getSegment()
 	if !seg.isInit {
 		panic(fmt.Sprintf("The [%s] id segment is not initialized", this.Key))
 	}
 
-	// 获取 id
-	id := seg.GetNext()
+	// get id
+	id := seg.getNext()
 	this.update()
 
-	// 判断预加载
+	// check preload
 	if !this.nextSegInited() && seg.needPreLoad() {
 		this.preload(f)
 	}
@@ -87,7 +86,6 @@ func (this *idAllocator) NextId(f preloadFunc) (int64, error) {
 	waitChan := make(chan byte, 1)
 	this.Waiting = append(this.Waiting, waitChan)
 	this.Unlock() // Other requests enter a timed wait
-
 	// Attention：
 	// When the step configuration is inappropriate (for example, if the step
 	// configuration is too small, the 'seg' is frequently pulled), there may be
@@ -99,7 +97,7 @@ func (this *idAllocator) NextId(f preloadFunc) (int64, error) {
 
 	// Wait up to 1000ms
 	// The failure is returned promptly and the caller tries again.
-	timer := time.NewTimer(1000 * time.Millisecond)
+	timer := time.NewTimer(2000 * time.Millisecond)
 	select {
 	case <-waitChan:
 	case <-timer.C:
@@ -121,7 +119,7 @@ func (this *idAllocator) NextId(f preloadFunc) (int64, error) {
 	// After switching 'seg', there may not be able to assign an 'id' after switching 'seg'.
 	// An error is returned and the caller tries again.
 
-	id = seg.GetNext()
+	id = seg.getNext()
 	this.update()
 
 	if seg.full() {
@@ -158,6 +156,10 @@ func (this *idAllocator) preload(f preloadFunc) {
 			return
 		}
 
+		if segConf == nil {
+			return
+		}
+
 		nowNextPos := this.getNextPos()
 
 		// The next 'seg' can be initialized only if
@@ -181,11 +183,7 @@ func (this *idAllocator) wakeup() {
 }
 
 func (this *idAllocator) getNextPos() int64 {
-	if this.currentPos == 0 {
-		return 1
-	} else {
-		return 0
-	}
+	return (^this.currentPos) & 1
 }
 
 func (this *idAllocator) switchSeg() {
