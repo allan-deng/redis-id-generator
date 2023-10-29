@@ -29,7 +29,8 @@ jobs:
                 TAG: ${{ github.event.inputs.tag }}
               run: |
                 make package 
-                file='idgensvr_'$TAG'.tar.gz'
+                new_string=$(echo "$TAG" | sed 's/\//_/g')
+                file='idgensvr_'$new_string'.tar.gz'
                 cp idgensvr.tar.gz $file
                 echo "ARCHIVE_NAME=$file" >> $GITHUB_ENV
             - name: Create Release
