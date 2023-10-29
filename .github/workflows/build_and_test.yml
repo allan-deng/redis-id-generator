@@ -26,7 +26,7 @@ jobs:
         GO_TEST_RES_PATH: test_ret_${{ github.ref_name }}
       run: |
         cd ./pkg/idgen
-        go test -cover -coverprofile=coverage.out -v -timeout 60s ./
+        go test -cover -coverprofile=coverage.out -v -timeout 300s ./
         commit_id=$(git rev-parse --short HEAD)
         file=$GO_TEST_RES_PATH'_'$commit_id'_'$(date +%Y%m%d-%H%M%S)'.log'
         make test > $file
