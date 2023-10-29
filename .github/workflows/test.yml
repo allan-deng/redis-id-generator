@@ -1,0 +1,46 @@
+name: test
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.21'
+
+    - name: Test
+      env:
+        GO_TEST_RES_PATH: test_ret_${{ github.ref_name }}
+      run: |
+        cd ./pkg/idgen
+        commit_id=$(git rev-parse --short HEAD)
+        file=$GO_TEST_RES_PATH'_'$commit_id'_'$(date +%Y%m%d-%H%M%S)'.log'
+        echo "TEST_RES=./pkg/idgen/$file" >> $GITHUB_ENV
+        go test -cover -coverprofile=coverage.out -v -timeout 300s ./ > $file
+        cd ../..
+        cat ./pkg/idgen/$file
+       
+    - name: Upload coverage reports to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        files: ./pkg/idgen/coverage.out
+        name: idgen
+        
+    - name: Upload Test Result
+      env:
+        GO_TEST_RES_PATH: test_ret_${{ github.ref_name }}
+      uses: actions/upload-artifact@v2
+      with:
+        name: test_result
+        path: ${{ env.TEST_RES }}

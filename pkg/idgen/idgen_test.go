@@ -88,7 +88,7 @@ func TestWithExpireTime(t *testing.T) {
 			assert.NotEqual(int64(0), id, "id is zero")
 			assert.NotNil(idGen.cache.get("test"), "biztag not in cache")
 
-			time.Sleep(tt.expireTime + 500*time.Millisecond)
+			time.Sleep(tt.expireTime + 1000*time.Millisecond)
 			assert.Nil(idGen.cache.get("test"), "biztag not expired: %d ms", tt.expireTime.Milliseconds())
 		})
 	}
