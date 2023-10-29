@@ -1,5 +1,5 @@
 #!/bin/bash
-rm -r ./idgen/
+rm -rf ./idgen/
 mkdir idgen
 
 # bin
