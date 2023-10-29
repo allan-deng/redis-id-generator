@@ -10,3 +10,6 @@ test:
 	
 bench:
 	go test -benchmem -run=^$$ -bench=^Benchmark  -benchtime=5s -cpu=1,2,4,8,16 github.com/allan-deng/redis-id-generator/pkg/idgen
+
+package:
+	sh ./script/package.sh
