@@ -17,7 +17,7 @@ jobs:
             - name: Checkout repository
               uses: actions/checkout@v2
               with:
-                ref: ${{ github.ref }}
+                ref: ${{ github.ref_name }}
                 
             - name: Set up Go
               uses: actions/setup-go@v4
@@ -29,7 +29,7 @@ jobs:
             
             - name: package
               env:
-                TAG: ${{ github.ref }}
+                TAG: ${{ github.ref_name }}
               run: |
                 make package 
                 file='idgensvr_'$TAG'.tar.gz'
@@ -41,8 +41,8 @@ jobs:
               env:
                 GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               with:
-                tag_name: ${{ github.ref }}
-                release_name: Release ${{ github.ref }}   
+                tag_name: ${{ github.ref_name }}
+                release_name: Release ${{ github.ref_name }}   
                 draft: false
                 prerelease: false 
             - name: Upload Release Asset
