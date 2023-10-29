@@ -6,9 +6,6 @@ on:
         tag:
           description: 'Tag name'
           required: true
-    push:
-        tags:
-            - 'v*'
 
 jobs:
     test:
@@ -17,7 +14,7 @@ jobs:
             - name: Checkout repository
               uses: actions/checkout@v2
               with:
-                ref: ${{ github.ref_name }}
+                ref: ${{ github.event.inputs.tag }}
                 
             - name: Set up Go
               uses: actions/setup-go@v4
@@ -29,7 +26,7 @@ jobs:
             
             - name: package
               env:
-                TAG: ${{ github.ref_name }}
+                TAG: ${{ github.event.inputs.tag }}
               run: |
                 make package 
                 file='idgensvr_'$TAG'.tar.gz'
@@ -41,8 +38,8 @@ jobs:
               env:
                 GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               with:
-                tag_name: ${{ github.ref_name }}
-                release_name: Release ${{ github.ref_name }}   
+                tag_name: ${{ github.event.inputs.tag }}
+                release_name: Release ${{ github.event.inputs.tag }}   
                 draft: false
                 prerelease: false 
             - name: Upload Release Asset
