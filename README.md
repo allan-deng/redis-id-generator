@@ -8,7 +8,7 @@
 
 Redis-id-generator is a high-performance distributed globally unique ID Generator based on Redis developed using Golang.
 
-Them roughly algorithm based on database, refer to [Meituan Leaf] (https://tech.meituan.com/2017/04/21/mt-leaf.html)
+Them roughly algorithm based on database, refer to [Meituan Leaf](https://tech.meituan.com/2017/04/21/mt-leaf.html)
 
 The code is simple, simple to use, high performance, extensible, provides ID generation http service and library two ways to use.
 
