@@ -5,7 +5,7 @@ go 1.21.2
 replace github.com/allan-deng/redis-id-generator/pkg/idgen => ./pkg/idgen
 
 require (
-	github.com/allan-deng/redis-id-generator/pkg/idgen v0.0.0-00010101000000-000000000000
+	github.com/allan-deng/redis-id-generator/pkg/idgen v0.1.0
 	github.com/buaazp/fasthttprouter v0.1.1
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/lestrrat/go-file-rotatelogs v0.0.0-20180223000712-d3151e2a480f

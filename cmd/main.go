@@ -5,11 +5,15 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"github.com/allan-deng/redis-id-generator/internal/router"
-	"github.com/allan-deng/redis-id-generator/internal/generator"
 	"time"
+
+	"github.com/allan-deng/redis-id-generator/internal/generator"
+	"github.com/allan-deng/redis-id-generator/internal/router"
 	rotatelogs "github.com/lestrrat/go-file-rotatelogs"
 	log "github.com/sirupsen/logrus"
+
+	"net/http"
+	_ "net/http/pprof"
 
 	"github.com/spf13/viper"
 	"github.com/valyala/fasthttp"
@@ -20,7 +24,18 @@ func main() {
 	confInit()
 	logInit()
 	generator.IdGenInit()
+	pprofRun()
 	serverRun()
+}
+
+func pprofRun() {
+	go func() {
+		env := viper.GetString("app.env")
+		if env == "debug" {
+			log.Info("debug env, init pprof svr on localhost:6060.")
+			http.ListenAndServe("localhost:6060", nil)
+		}
+	}()
 }
 
 func serverRun() {
